@@ -16,20 +16,6 @@ describe("github service", () => {
     let http;
     let httpGetStub;
 
-    const organisationId = "facebook";
-
-    const userData = [
-        {
-            userId: "one"
-        },
-        {
-            userId: "two"
-        },
-        {
-            userId: "three"
-        }
-    ];
-
     beforeEach(() => {
         http = new Http();
         httpGetStub = sinon.stub(http, 'get');
@@ -39,46 +25,121 @@ describe("github service", () => {
         httpGetStub.restore();
     });
 
-    it("should return users for organisation", (done) => {
-        //Arrange
-        httpGetStub.resolves(userData);
+    describe('getUsersForOrganisation', () => {
+        const organisationId = "facebook";
 
-        gitHubService = new GitHubService(baseGitHubUrl, http, "");
+        const userData = [
+            {
+                userId: "one"
+            },
+            {
+                userId: "two"
+            },
+            {
+                userId: "three"
+            }
+        ];
+        it("should return users for organisation", (done) => {
+            //Arrange
+            httpGetStub.resolves(userData);
 
-        //Act
-        let promise = gitHubService.getUsersForOrganisation(organisationId);
+            gitHubService = new GitHubService(baseGitHubUrl, http, "");
 
-        //Assert
-        promise.should.eventually.deep.equal(userData).notify(done);
-    });
+            //Act
+            let promise = gitHubService.getUsersForOrganisation(organisationId);
 
-    it("should append authentication parameter to url", () => {
-        //Arrange
-        const secret = "secret";
+            //Assert
+            promise.should.eventually.deep.equal(userData).notify(done);
+        });
 
-        httpGetStub.resolves(userData);
+        it("should append authentication parameter to url", () => {
+            //Arrange
+            const secret = "secret";
 
-        gitHubService = new GitHubService(baseGitHubUrl, http, secret);
+            httpGetStub.resolves(userData);
 
-        //Act
-        gitHubService.getUsersForOrganisation(organisationId);
+            gitHubService = new GitHubService(baseGitHubUrl, http, secret);
 
-        //Assert
-        httpGetStub.getCall(0).args[0].endsWith("?access_token=" + secret).should.equal(true);
-    });
+            //Act
+            gitHubService.getUsersForOrganisation(organisationId);
 
-    it("should prepend base url to url", () => {
-        //Arrange
-        const secret = "secret";
+            //Assert
+            httpGetStub.getCall(0).args[0].endsWith("?access_token=" + secret).should.equal(true);
+        });
 
-        httpGetStub.resolves(userData);
+        it("should prepend base url to url", () => {
+            //Arrange
+            const secret = "secret";
 
-        gitHubService = new GitHubService(baseGitHubUrl, http, secret);
+            httpGetStub.resolves(userData);
 
-        //Act
-        gitHubService.getUsersForOrganisation(organisationId);
+            gitHubService = new GitHubService(baseGitHubUrl, http, secret);
 
-        //Assert
-        httpGetStub.getCall(0).args[0].startsWith(baseGitHubUrl).should.equal(true);
-    });
+            //Act
+            gitHubService.getUsersForOrganisation(organisationId);
+
+            //Assert
+            httpGetStub.getCall(0).args[0].startsWith(baseGitHubUrl).should.equal(true);
+        });
+    })
+
+
+    describe('getRepositoriesByUser', () => {
+        const userName = "testuser";
+
+        const userData = [
+            {
+                name: "one"
+            },
+            {
+                name: "two"
+            },
+            {
+                name: "three"
+            }
+        ];
+
+        it("should return all repository for the user", (done) => {
+            //Arrange
+            httpGetStub.resolves(userData);
+
+            gitHubService = new GitHubService(baseGitHubUrl, http, "");
+
+            //Act
+            let promise = gitHubService.getRepositoriesByUser(userName);
+
+            //Assert
+            promise.should.eventually.deep.equal(userData).notify(done);
+        });
+
+        it("should append authentication parameter to url", () => {
+            //Arrange
+            const secret = "secret";
+
+            httpGetStub.resolves(userData);
+
+            gitHubService = new GitHubService(baseGitHubUrl, http, secret);
+
+            //Act
+            gitHubService.getRepositoriesByUser(userName);
+
+            //Assert
+            httpGetStub.getCall(0).args[0].endsWith("?access_token=" + secret).should.equal(true);
+        });
+
+        it("should prepend base url to url", () => {
+            //Arrange
+            const secret = "secret";
+
+            httpGetStub.resolves(userData);
+
+            gitHubService = new GitHubService(baseGitHubUrl, http, secret);
+
+            //Act
+            gitHubService.getRepositoriesByUser(userName);
+
+            //Assert
+            httpGetStub.getCall(0).args[0].startsWith(baseGitHubUrl).should.equal(true);
+        });
+    })
 });

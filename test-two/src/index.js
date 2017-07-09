@@ -13,7 +13,14 @@ let gitHubService = new GitHubService(baseUrl, http, gitHubApiAuthToken);
 
 gitHubService.getUsersForOrganisation(organisationId).then((users) => {
     users.forEach((user) => {
-        logger.log("Username: " + user.login);
+        gitHubService.getRepositoriesByUser(user.login).then(repos => {
+            logger.log("Username: " + user.login);
+            logger.log("repositories:");
+            repos.forEach(repo => {
+                logger.log(repo.name);
+            });
+            logger.log("------------");
+        });
     });
 }).catch((error) => {
     logger.log("Error: " + error);

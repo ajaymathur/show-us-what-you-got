@@ -12,6 +12,10 @@ class GitHubService {
     getUsersForOrganisation(organisationId) {
         return this.http.get(this.baseUrl + "orgs/" + organisationId + "/members" + this.authenticationQueryString);
     }
+
+    getRepositoriesByUser(userName) {
+        return this.http.get(`${this.baseUrl}users/${userName}/repos${this.authenticationQueryString}`)
+    }
 }
 
 module.exports = GitHubService;
